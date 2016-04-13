@@ -26,7 +26,7 @@ public class LoginScreen extends AppCompatActivity {
     private EditText username,password;
     private Button login_button;
     private RequestQueue requestQueue;
-    private static final String URL = "http://98.230.12.64/webservice/user_control.php";
+    private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/user_control.php";
     private StringRequest request;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
