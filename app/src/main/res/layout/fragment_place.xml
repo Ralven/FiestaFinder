@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="groupfiesta.fiestafinder.PlaceFragment">
+    tools:context="groupfiesta.fiestafinder.PlaceFragment"
+    android:background="@color/backgroundColor">
 
     <EditText
         android:layout_width="wrap_content"
@@ -18,7 +19,8 @@
         android:text="Post "
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="@color/colorAccent" />
 
     <TextView
         android:layout_width="wrap_content"
