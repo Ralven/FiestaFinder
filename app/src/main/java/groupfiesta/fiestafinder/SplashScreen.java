@@ -9,7 +9,7 @@ import android.os.Handler;
  * Created by Stacy on 4/7/2016.
  */
 public class SplashScreen extends Activity {
-    private static int TIME_OUT = 3000;
+    private static int TIME_OUT = 1000;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,7 +18,7 @@ public class SplashScreen extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(SplashScreen.this, Login.class);
+                Intent i = new Intent(SplashScreen.this, LoginScreen.class);
                 startActivity(i);
 
                 finish();
