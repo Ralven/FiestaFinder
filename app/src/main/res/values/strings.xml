@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">FiestaFinder</string>
     <string name="title_activity_maps">Map</string>
+    <string name="username_hint">Username</string>
+    <string name="login_create">LOGIN/CREATE</string>
+    <string name="login_subscribe">Login/Subscribe</string>
+    <string name="places_name">PLACES NAME</string>
+    <string name="post_button">Post</string>
+    <string name="fiesta_finder">Fiesta Finder</string>
+    <string name="password">password</string>
 </resources>
