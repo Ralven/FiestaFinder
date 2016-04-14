@@ -97,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
         LatLng latLng = new LatLng(latitude, longitude);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+
     }
 
     @Override
