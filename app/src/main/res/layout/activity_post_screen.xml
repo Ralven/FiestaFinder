@@ -15,11 +15,12 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/post_text"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/post_button"
         android:layout_below="@+id/post_title"
-        android:hint="@string/post_text_hint" />
+        android:hint="@string/post_text_hint"
+        android:layout_above="@+id/post_button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:gravity="top" />
 
     <Button
         android:layout_width="wrap_content"
