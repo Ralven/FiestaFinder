@@ -19,12 +19,12 @@
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/post_button"
         android:layout_below="@+id/post_title"
-        android:text="Post Text" />
+        android:hint="@string/post_text_hint" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Post"
+        android:text="@string/post_button"
         android:id="@+id/post_button"
         android:layout_alignTop="@+id/cancel_button"
         android:layout_alignParentStart="true" />
@@ -32,17 +32,17 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"
+        android:text="@string/cancel_button"
         android:id="@+id/cancel_button"
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/post_text" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/post_title"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/cancel_button"
-        android:text="Post Title" />
+        android:hint="@string/post_title_hint" />
 </RelativeLayout>

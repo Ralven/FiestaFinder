@@ -7,5 +7,8 @@
     <string name="places_name">PLACES NAME</string>
     <string name="post_button">Post</string>
     <string name="fiesta_finder">Fiesta Finder</string>
-    <string name="password">password</string>
+    <string name="password">Password</string>
+    <string name="post_title_hint">Post Title</string>
+    <string name="post_text_hint">Post Text</string>
+    <string name="cancel_button">Cancel</string>
 </resources>
