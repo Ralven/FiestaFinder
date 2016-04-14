@@ -22,6 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".LoginScreen" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -37,7 +38,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".PostScreen"></activity>
     </application>
 
 </manifest>

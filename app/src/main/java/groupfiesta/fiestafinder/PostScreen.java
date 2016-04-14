@@ -22,24 +22,25 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginScreen extends AppCompatActivity {
-    private EditText username,password;
-    private Button login_button;
+public class PostScreen extends AppCompatActivity {
+    private EditText post_text, post_title;
+    private Button post_button,cancel_button;
+    private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/post_control.php";
     private RequestQueue requestQueue;
-    private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/user_control.php";
     private StringRequest request;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_post_screen);
 
-        username = (EditText) findViewById(R.id.username_input);
-        password = (EditText) findViewById(R.id.password_input);
-        login_button = (Button) findViewById(R.id.login_button);
+        post_title = (EditText) findViewById(R.id.post_title);
+        post_text = (EditText) findViewById(R.id.post_text);
+        post_button = (Button) findViewById(R.id.post_button);
+        cancel_button = (Button) findViewById(R.id.cancel_button);
 
         requestQueue = Volley.newRequestQueue(this);
 
-        login_button.setOnClickListener(new View.OnClickListener() {
+        post_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -65,14 +66,24 @@ public class LoginScreen extends AppCompatActivity {
                 }) {
                     protected Map<String, String> getParams() throws AuthFailureError {
                         HashMap<String, String> hashMap = new HashMap<String, String>();
-                        hashMap.put("username", username.getText().toString());
-                        hashMap.put("password", password.getText().toString());
+                        hashMap.put("post_text", post_text.getText().toString());
+                        hashMap.put("post_title",post_title.getText().toString());
                         return hashMap;
                     }
                 };
                 requestQueue.add(request);
 
             }
+
         });
+        cancel_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+            }
+        });
+
+
+
     }
 }
