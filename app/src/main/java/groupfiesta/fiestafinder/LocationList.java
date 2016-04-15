@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -32,8 +33,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class LocationList extends AppCompatActivity{
+public class LocationList extends AppCompatActivity {
     private static final String URLlocationlist = "http://fiestafinder.azurewebsites.net/webservice/location_list.php";
 
     private RequestQueue requestQueue;
@@ -48,6 +50,7 @@ public class LocationList extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         location_ListView = (ListView) findViewById(R.id.location_ListView);
@@ -83,15 +86,19 @@ public class LocationList extends AppCompatActivity{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), PostCreate.class));
+                Intent postCreatIntent = new Intent(getApplicationContext(),PostCreate.class);
+                Bundle usernameBundle = getIntent().getExtras();
+                postCreatIntent.putExtra("username",usernameBundle.getString("username").toString());
+                startActivity(postCreatIntent);
             }
         });
 
         location_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long rowId) {
-                Toast.makeText(getApplicationContext(), "you clicked " + (position + 1), Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), PostList.class));
+
+
+                Toast.makeText(getBaseContext(), Locations.toString(), Toast.LENGTH_LONG).show();
 
             }
         });

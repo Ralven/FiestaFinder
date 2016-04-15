@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +38,8 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
     private EditText post_text, post_title;
     private TextView location_name;
     private Button post_button,cancel_button;
+    private CheckBox postAs_checkBox;
+    private String checkedUsername = null;
     int REQUEST_PLACE_PICKER = 1;
 
     private GoogleApiClient mGoogleApiClient;
@@ -48,10 +52,14 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_create);
         post_text = (EditText) findViewById(R.id.post_text);
+        post_title = (EditText) findViewById(R.id.post_title);
         post_button = (Button) findViewById(R.id.post_button);
         cancel_button = (Button) findViewById(R.id.cancel_button);
         location_name = (TextView) findViewById(R.id.location_name);
-
+        postAs_checkBox = (CheckBox) findViewById(R.id.postAs_checkBox);
+        Bundle usernameBundle = getIntent().getExtras();
+        final String username = usernameBundle.getString("username");
+        postAs_checkBox.setText("Post as "+username);
         requestQueue = Volley.newRequestQueue(this);
 
         mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
@@ -68,14 +76,23 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
         post_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(postAs_checkBox.isChecked())
+                {
+                    checkedUsername = username;
+                }else{
+                    checkedUsername = "Anonymous";
+                }
                 request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
+                            Log.i("resp", jsonObject.toString());
                             if (jsonObject.names().get(0).equals("success")) {
                                 Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
-                                startActivity(new Intent(getApplicationContext(), LocationList.class));
+                                Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
+                                locationLaunchIntent.putExtra("username",username);
+                                startActivity(locationLaunchIntent);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
                             }
@@ -91,11 +108,14 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
                     protected Map<String, String> getParams() throws AuthFailureError {
                         HashMap<String, String> hashMap = new HashMap<String, String>();
                         hashMap.put("post_text", post_text.getText().toString());
+                        hashMap.put("post_title", post_title.getText().toString());
+                        hashMap.put("username",checkedUsername.toString());
                         hashMap.put("location",location_name.getText().toString());
                         return hashMap;
                     }
                 };
                 requestQueue.add(request);
+
 
             }
 
@@ -103,7 +123,9 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), LocationList.class));
+                Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
+                locationLaunchIntent.putExtra("username",username);
+                startActivity(locationLaunchIntent);
             }
         });
     }
@@ -114,11 +136,11 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
             // The user has selected a place. Extract the name and address.
             final Place place = PlacePicker.getPlace(data, this);
             final CharSequence name = place.getName();
-            final CharSequence address = place.getAddress();
-            String attributions = PlacePicker.getAttributions(data);
-            if (attributions == null) {
-                attributions = "";
-            }
+
+//            String attributions = PlacePicker.getAttributions(data);
+//            if (attributions == null) {
+//                attributions = "";
+//            }
             location_name.setText(name);
 
         } else {
