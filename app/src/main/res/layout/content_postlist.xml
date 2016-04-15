@@ -10,11 +10,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".PostList"
-    tools:showIn="@layout/activity_post_list">
+    tools:showIn="@layout/activity_postlist">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Location Title"
+        android:id="@+id/locationtitle_TextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:textSize="30dp"
+        android:padding="5dp" />
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/post_ListView"
-        android:textAlignment="gravity" />
+        android:textAlignment="gravity"
+        android:layout_below="@+id/locationtitle_TextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:padding="5dp" />
+
 </RelativeLayout>

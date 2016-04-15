@@ -51,7 +51,6 @@ public class LoginScreen extends AppCompatActivity {
                             if (jsonObject.names().get(0).equals("success")) {
                                 Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
                                 Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
-
                                 locationLaunchIntent.putExtra("username",username.getText().toString());
                                 startActivity(locationLaunchIntent);
                             } else {

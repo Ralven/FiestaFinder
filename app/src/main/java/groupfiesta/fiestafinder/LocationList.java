@@ -2,7 +2,6 @@ package groupfiesta.fiestafinder;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,8 +10,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,36 +17,26 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationAvailability;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlacePicker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class LocationList extends AppCompatActivity {
+public class LocationList extends AppCompatActivity{
     private static final String URLlocationlist = "http://fiestafinder.azurewebsites.net/webservice/location_list.php";
 
     private RequestQueue requestQueue;
     private StringRequest request;
+
     ListView location_ListView;
-
     ArrayList<String> Locations = new ArrayList<String>();
-
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location_list);
+        setContentView(R.layout.activity_locationlist);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -67,9 +54,9 @@ public class LocationList extends AppCompatActivity {
                         Locations.add(jsonOArray.getJSONObject(i).getString("location"));
                     }
                     location_ListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
-                            R.layout.list_item, R.id.item_txt, Locations));
+                            R.layout.location_listitem, R.id.locationitem_txt, Locations));
                 } catch (JSONException e) {
-                    Log.i("Exception", e.getLocalizedMessage().toString());
+                    Log.i("Exception", e.getLocalizedMessage());
                     e.printStackTrace();
                 }
             }
@@ -80,29 +67,19 @@ public class LocationList extends AppCompatActivity {
         });
         requestQueue.add(request);
 
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent postCreatIntent = new Intent(getApplicationContext(),PostCreate.class);
+                Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
                 Bundle usernameBundle = getIntent().getExtras();
-                postCreatIntent.putExtra("username",usernameBundle.getString("username").toString());
-                startActivity(postCreatIntent);
+                postCreateIntent.putExtra("username", usernameBundle.getString("username").toString());
+                startActivity(postCreateIntent);
             }
         });
-
-        location_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long rowId) {
-
-
-                Toast.makeText(getBaseContext(), Locations.toString(), Toast.LENGTH_LONG).show();
-
-            }
-        });
-
-
     }
+
+
 }
+

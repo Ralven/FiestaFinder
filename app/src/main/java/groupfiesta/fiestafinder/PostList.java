@@ -26,6 +26,7 @@ public class PostList extends AppCompatActivity {
     private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/post_list.php";
     private RequestQueue requestQueue;
     private StringRequest request;
+
     ListView post_ListView;
     ArrayList<String> Posts = new ArrayList<String>();
 
@@ -33,7 +34,8 @@ public class PostList extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_list);
+        setContentView(R.layout.activity_postlist);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         post_ListView = (ListView) findViewById(R.id.post_ListView);
@@ -46,13 +48,13 @@ public class PostList extends AppCompatActivity {
                 try {
                     JSONArray jsonOArray = new JSONArray(response);
                     Log.i("resp", jsonOArray.toString());
-                    for (int i = 0; i < jsonOArray.length(); i++)
-                    {
+                    for (int i = 0; i < jsonOArray.length(); i++) {
                         Posts.add(jsonOArray.getJSONObject(i).getString("post_text"));
                     }
-                    post_ListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(),R.layout.list_item,R.id.item_txt, Posts));
+                    post_ListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
+                            R.layout.post_listitem,R.id.postlist_txt, Posts));
                 } catch (JSONException e) {
-                    Log.i("Exception",e.getLocalizedMessage().toString());
+                    Log.i("Exception", e.getLocalizedMessage());
                     e.printStackTrace();
                 }
             }
@@ -63,18 +65,16 @@ public class PostList extends AppCompatActivity {
         });
         requestQueue.add(request);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), PostCreate.class));
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        assert fab != null;
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent launchPostCreate = new Intent(getApplicationContext(),PostCreate.class);
+//                Bundle usernameBundle = getIntent().getExtras();
+//                launchPostCreate.putExtra("username", usernameBundle.getString("username"));
+//                startActivity(launchPostCreate);
+//            }
+//        });
     }
-
-    public void doPositiveClick() {
-        startActivity(new Intent(getApplicationContext(), PostList.class));
-    }
-
-
 }
