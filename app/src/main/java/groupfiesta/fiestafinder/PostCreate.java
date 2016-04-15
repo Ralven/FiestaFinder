@@ -1,11 +1,14 @@
 package groupfiesta.fiestafinder;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -15,6 +18,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,28 +32,42 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostScreen extends AppCompatActivity {
+public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private EditText post_text, post_title;
+    private TextView location_name;
     private Button post_button,cancel_button;
+    int REQUEST_PLACE_PICKER = 1;
+
+    private GoogleApiClient mGoogleApiClient;
+    private int clientId;
     private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/post_control.php";
     private RequestQueue requestQueue;
     private StringRequest request;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_screen);
-
-        post_title = (EditText) findViewById(R.id.post_title);
+        setContentView(R.layout.activity_post_create);
         post_text = (EditText) findViewById(R.id.post_text);
         post_button = (Button) findViewById(R.id.post_button);
         cancel_button = (Button) findViewById(R.id.cancel_button);
+        location_name = (TextView) findViewById(R.id.location_name);
 
         requestQueue = Volley.newRequestQueue(this);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+                .enableAutoManage(PostCreate.this,PostCreate.this /* OnConnectionFailedListener */)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(builder.build(PostCreate.this), REQUEST_PLACE_PICKER);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
 
         post_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -51,7 +75,7 @@ public class PostScreen extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(response);
                             if (jsonObject.names().get(0).equals("success")) {
                                 Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
-                                startActivity(new Intent(getApplicationContext(), PostList.class));
+                                startActivity(new Intent(getApplicationContext(), LocationList.class));
                             } else {
                                 Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
                             }
@@ -67,7 +91,7 @@ public class PostScreen extends AppCompatActivity {
                     protected Map<String, String> getParams() throws AuthFailureError {
                         HashMap<String, String> hashMap = new HashMap<String, String>();
                         hashMap.put("post_text", post_text.getText().toString());
-                        hashMap.put("post_title",post_title.getText().toString());
+                        hashMap.put("location",location_name.getText().toString());
                         return hashMap;
                     }
                 };
@@ -79,11 +103,33 @@ public class PostScreen extends AppCompatActivity {
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), PostList.class));
+                startActivity(new Intent(getApplicationContext(), LocationList.class));
             }
         });
-
-
-
     }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_PLACE_PICKER
+                && resultCode == LocationList.RESULT_OK) {
+            // The user has selected a place. Extract the name and address.
+            final Place place = PlacePicker.getPlace(data, this);
+            final CharSequence name = place.getName();
+            final CharSequence address = place.getAddress();
+            String attributions = PlacePicker.getAttributions(data);
+            if (attributions == null) {
+                attributions = "";
+            }
+            location_name.setText(name);
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e("tag",connectionResult.toString());
+    }
+
+
 }

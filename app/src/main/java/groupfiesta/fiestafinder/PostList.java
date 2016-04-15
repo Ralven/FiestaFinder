@@ -3,15 +3,12 @@ package groupfiesta.fiestafinder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -51,7 +48,7 @@ public class PostList extends AppCompatActivity {
                     Log.i("resp", jsonOArray.toString());
                     for (int i = 0; i < jsonOArray.length(); i++)
                     {
-                        Posts.add(jsonOArray.getJSONObject(i).getString("post_title"));
+                        Posts.add(jsonOArray.getJSONObject(i).getString("post_text"));
                     }
                     post_ListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(),R.layout.list_item,R.id.item_txt, Posts));
                 } catch (JSONException e) {
@@ -70,7 +67,7 @@ public class PostList extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), PostScreen.class));
+                startActivity(new Intent(getApplicationContext(), PostCreate.class));
             }
         });
     }

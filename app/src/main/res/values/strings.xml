@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">FiestaFinder</string>
+    <string name="google_app_id">AIzaSyDt3Bp128357mfRtl32SC14hzgmzWvp_BE</string>
     <string name="title_activity_maps">Map</string>
     <string name="username_hint">Username</string>
     <string name="login_create">LOGIN/CREATE</string>
-    <string name="login_subscribe">Login/Subscribe</string>
+    <string name="login_subscribe">Login/Register</string>
     <string name="places_name">PLACES NAME</string>
     <string name="post_button">Post</string>
     <string name="fiesta_finder">Fiesta Finder</string>
@@ -12,4 +13,5 @@
     <string name="post_text_hint">Post Text</string>
     <string name="cancel_button">Cancel</string>
     <string name="title_activity_post_list">Post List</string>
+    <string name="title_activity_location_list">Location List</string>
 </resources>
