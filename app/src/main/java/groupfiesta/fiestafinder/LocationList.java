@@ -23,8 +23,8 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class LocationList extends AppCompatActivity{
-    private static final String URLlocationlist = "http://fiestafinder.azurewebsites.net/webservice/location_list.php";
+public class LocationList extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    private static final String URL_LOCATIONLIST = "http://fiestafinder.azurewebsites.net/webservice/location_list.php";
 
     private RequestQueue requestQueue;
     private StringRequest request;
@@ -41,9 +41,10 @@ public class LocationList extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         location_ListView = (ListView) findViewById(R.id.location_ListView);
+        location_ListView.setOnItemClickListener(this);
 
         requestQueue = Volley.newRequestQueue(this);
-        request = new StringRequest(Request.Method.GET, URLlocationlist, new Response.Listener<String>() {
+        request = new StringRequest(Request.Method.GET, URL_LOCATIONLIST, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.i("resp", "Getting resp");
@@ -55,6 +56,7 @@ public class LocationList extends AppCompatActivity{
                     }
                     location_ListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
                             R.layout.location_listitem, R.id.locationitem_txt, Locations));
+
                 } catch (JSONException e) {
                     Log.i("Exception", e.getLocalizedMessage());
                     e.printStackTrace();
@@ -81,5 +83,14 @@ public class LocationList extends AppCompatActivity{
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent postListIntent = new Intent(getApplicationContext(), PostList.class);
+        Bundle usernameBundle = getIntent().getExtras();
+        postListIntent.putExtra("username", usernameBundle.getString("username").toString());
+        postListIntent.putExtra("location",Locations.get(position).toString());
+        startActivity(postListIntent);
+
+    }
 }
 

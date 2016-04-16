@@ -45,7 +45,6 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
     private int clientId;
     private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/post_control.php";
     private RequestQueue requestQueue;
-    private StringRequest request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,35 +76,38 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
         post_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(postAs_checkBox.isChecked())
-                {
-                    checkedUsername = username;
-                }else{
-                    checkedUsername = "Anonymous";
-                }
-                request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            Log.i("resp", jsonObject.toString());
-                            if (jsonObject.names().get(0).equals("success")) {
-                                Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
-                                Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
-                                locationLaunchIntent.putExtra("username",username);
-                                startActivity(locationLaunchIntent);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
+                checkedUsername = postAs_checkBox.isChecked() ?  username : "Anonymous";
+
+                StringRequest request = new StringRequest(
+                    Request.Method.POST,
+                    URL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+//                                    Log.i("resp", jsonObject.toString());
+                                if (jsonObject.names().get(0).equals("success")) {
+                                    Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
+                                    Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
+                                    locationLaunchIntent.putExtra("username",username);
+                                    startActivity(locationLaunchIntent);
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
                         }
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                }) {
+                )
+                {
                     protected Map<String, String> getParams() throws AuthFailureError {
                         HashMap<String, String> hashMap = new HashMap<String, String>();
                         hashMap.put("post_text", post_text.getText().toString());
