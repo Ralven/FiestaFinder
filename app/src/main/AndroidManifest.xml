@@ -24,7 +24,10 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA1kPDB0SxVCEXjT1Bv2AE0O69IBGfLRPI" />
+            android:value="@string/google_api_key" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <!--
         The API key for Google Maps-based APIs is defined as a string resource.
         (See the file "res/values/google_maps_api.xml").
@@ -51,6 +54,7 @@
             android:name=".LocationList"
             android:label="@string/title_activity_location_list"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".PostDetails"></activity>
     </application>
 
 </manifest>

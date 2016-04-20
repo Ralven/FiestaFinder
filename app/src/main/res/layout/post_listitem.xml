@@ -9,7 +9,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#616161"
         android:text="New Text"
-        android:id="@+id/postlist_txt"
+        android:id="@+id/postlistitem_txt"
         android:layout_margin="5dp"
         android:padding="5dp"
         android:clickable="true" />

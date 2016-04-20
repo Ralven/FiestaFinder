@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,27 +27,43 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostList extends AppCompatActivity {
+public class PostList extends AppCompatActivity implements AdapterView.OnItemClickListener{
     private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/post_list.php";
+
     private RequestQueue requestQueue;
     private StringRequest request;
-    Bundle usernameBundle;
-    ListView post_ListView;
-    ArrayList<String> Posts;
+    private Bundle dataBundle;
+    private ListView post_ListView;
+    private ArrayList<String> PostTitle;
+    private ArrayList<String> Id;
+    private ArrayList<String> PostText;
+    private ArrayList<String> Username;
+    private TextView locationTitle;
+    private String postTitle;
+    private String postText;
+    private String location;
+    private String myusername;
+    private String id;
+
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_postlist);
-        usernameBundle = getIntent().getExtras();
-        Posts = new ArrayList<String>();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        final TextView locationTitle = (TextView) findViewById(R.id.locationtitle_TextView);
+
+        dataBundle = getIntent().getExtras();
+        location = dataBundle.getString("location");
+        myusername = dataBundle.getString("username");
+        PostTitle = new ArrayList<String>();
+        Id = new ArrayList<String>();
+        PostText = new ArrayList<String>();
+        Username = new ArrayList<String>();
         post_ListView = (ListView) findViewById(R.id.post_ListView);
-        String title = usernameBundle.getString("location");
-        locationTitle.setText(title);
+        post_ListView.setOnItemClickListener(this);
+        locationTitle = (TextView) findViewById(R.id.locationtitle_TextView);
+
+        locationTitle.setText(location);
         requestQueue = Volley.newRequestQueue(this);
         request = new StringRequest(
             Request.Method.POST,
@@ -59,10 +76,19 @@ public class PostList extends AppCompatActivity {
                         JSONArray jsonOArray = new JSONArray(response);
                         Log.i("resp", jsonOArray.toString());
                         for (int i = 0; i < jsonOArray.length(); i++) {
-                            Posts.add(jsonOArray.getJSONObject(i).getString("post_text"));
+                            PostTitle.add(jsonOArray.getJSONObject(i).getString("post_title"));
+                        }
+                        for (int i = 0; i < jsonOArray.length(); i++) {
+                            Id.add(jsonOArray.getJSONObject(i).getString("id"));
+                        }
+                        for (int i = 0; i < jsonOArray.length(); i++) {
+                            PostText.add(jsonOArray.getJSONObject(i).getString("post_text"));
+                        }
+                        for (int i = 0; i < jsonOArray.length(); i++) {
+                            Username.add(jsonOArray.getJSONObject(i).getString("username"));
                         }
                         post_ListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
-                                R.layout.post_listitem, R.id.postlist_txt, Posts));
+                                R.layout.post_listitem, R.id.postlistitem_txt, PostTitle));
                     } catch (JSONException e) {
                         Log.i("Exception", e.getLocalizedMessage());
                         e.printStackTrace();
@@ -84,6 +110,21 @@ public class PostList extends AppCompatActivity {
             }
         };
         requestQueue.add(request);
+    }
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent postDetailsIntent = new Intent(getApplicationContext(), PostDetails.class);
+        postTitle = PostTitle.get(position).toString();
+        for(int i = 0; i < Id.size();i++){
+            if(PostTitle.get(i) == postTitle){
+                postDetailsIntent.putExtra("id",this.Id.get(i));
+                postDetailsIntent.putExtra("post_text",this.PostText.get(i));
+                postDetailsIntent.putExtra("username",this.Username.get(i));
+            }
+        }
+        //postDetailsIntent.putExtra("location",locationTitle.getText().toString());
+        postDetailsIntent.putExtra("post_title",PostTitle.get(position).toString());
+        startActivity(postDetailsIntent);
     }
 }
 

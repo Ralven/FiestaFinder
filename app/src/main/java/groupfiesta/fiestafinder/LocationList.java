@@ -23,14 +23,22 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class LocationList extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class LocationList extends AppCompatActivity implements AdapterView.OnItemClickListener{
     private static final String URL_LOCATIONLIST = "http://fiestafinder.azurewebsites.net/webservice/location_list.php";
 
     private RequestQueue requestQueue;
     private StringRequest request;
-
-    ListView location_ListView;
-    ArrayList<String> Locations = new ArrayList<String>();
+    private String postTitle;
+    private String postText;
+    private String location;
+    private String username;
+    private Bundle dataBundle;
+    private ListView location_ListView;
+    private ArrayList<String> Post_ID;
+    private ArrayList<String> Locations;
+    private ArrayList<String> Post_Title;
+    private ArrayList<String> Post_Text;
+    private ArrayList<String> Username;
 
     @Override
 
@@ -40,9 +48,16 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Locations = new ArrayList<String>();
+        Post_Title = new ArrayList<String>();
+        Post_Text = new ArrayList<String>();
+        Username = new ArrayList<String>();
+        Post_ID = new ArrayList<String>();
         location_ListView = (ListView) findViewById(R.id.location_ListView);
         location_ListView.setOnItemClickListener(this);
-
+        dataBundle = getIntent().getExtras();
+        username = dataBundle.getString("username");
         requestQueue = Volley.newRequestQueue(this);
         request = new StringRequest(Request.Method.GET, URL_LOCATIONLIST, new Response.Listener<String>() {
             @Override
@@ -56,7 +71,6 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
                     }
                     location_ListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
                             R.layout.location_listitem, R.id.locationitem_txt, Locations));
-
                 } catch (JSONException e) {
                     Log.i("Exception", e.getLocalizedMessage());
                     e.printStackTrace();
@@ -75,8 +89,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View view) {
                 Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
-                Bundle usernameBundle = getIntent().getExtras();
-                postCreateIntent.putExtra("username", usernameBundle.getString("username").toString());
+                postCreateIntent.putExtra("username",username);
                 startActivity(postCreateIntent);
             }
         });
@@ -86,8 +99,8 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent postListIntent = new Intent(getApplicationContext(), PostList.class);
-        Bundle usernameBundle = getIntent().getExtras();
-        postListIntent.putExtra("username", usernameBundle.getString("username").toString());
+
+        //postListIntent.putExtra("username", username);
         postListIntent.putExtra("location",Locations.get(position).toString());
         startActivity(postListIntent);
 

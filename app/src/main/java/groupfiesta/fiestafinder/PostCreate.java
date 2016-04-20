@@ -36,11 +36,11 @@ import java.util.Map;
 public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private EditText post_text, post_title;
     private TextView location_name;
-    private Button post_button,cancel_button;
+    private Button post_button, cancel_button;
     private CheckBox postAs_checkBox;
     private String checkedUsername = null;
     private String location_id;
-    int REQUEST_PLACE_PICKER = 1;
+    int REQUEST_PLACE_PICKER = Place.TYPE_BAR;
     private GoogleApiClient mGoogleApiClient;
     private int clientId;
     private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/post_control.php";
@@ -50,23 +50,22 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_postcreate);
-        post_text = (EditText) findViewById(R.id.post_text);
-        post_title = (EditText) findViewById(R.id.post_title);
+        post_text = (EditText) findViewById(R.id.post_text_detalis);
+        post_title = (EditText) findViewById(R.id.post_title_details);
         post_button = (Button) findViewById(R.id.post_button);
         cancel_button = (Button) findViewById(R.id.cancel_button);
         location_name = (TextView) findViewById(R.id.location_name);
         postAs_checkBox = (CheckBox) findViewById(R.id.postAs_checkBox);
         Bundle usernameBundle = getIntent().getExtras();
         final String username = usernameBundle.getString("username");
-        postAs_checkBox.setText("Post as "+username);
+        postAs_checkBox.setText("Post as " + username);
         requestQueue = Volley.newRequestQueue(this);
         mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
-                .enableAutoManage(PostCreate.this,PostCreate.this /* OnConnectionFailedListener */)
+                .enableAutoManage(PostCreate.this, PostCreate.this /* OnConnectionFailedListener */)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-
         try {
             startActivityForResult(builder.build(PostCreate.this), REQUEST_PLACE_PICKER);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
@@ -76,45 +75,44 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
         post_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkedUsername = postAs_checkBox.isChecked() ?  username : "Anonymous";
+                checkedUsername = postAs_checkBox.isChecked() ? username : "Anonymous";
 
                 StringRequest request = new StringRequest(
-                    Request.Method.POST,
-                    URL,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
+                        Request.Method.POST,
+                        URL,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
 //                                    Log.i("resp", jsonObject.toString());
-                                if (jsonObject.names().get(0).equals("success")) {
-                                    Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
-                                    Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
-                                    locationLaunchIntent.putExtra("username",username);
-                                    startActivity(locationLaunchIntent);
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
+                                    if (jsonObject.names().get(0).equals("success")) {
+                                        Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
+                                        Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
+                                        locationLaunchIntent.putExtra("username", username);
+                                        startActivity(locationLaunchIntent);
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
                             }
                         }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-
-                        }
-                    }
-                )
-                {
+                ) {
                     protected Map<String, String> getParams() throws AuthFailureError {
                         HashMap<String, String> hashMap = new HashMap<String, String>();
                         hashMap.put("post_text", post_text.getText().toString());
                         hashMap.put("post_title", post_title.getText().toString());
-                        hashMap.put("username",checkedUsername.toString());
-                        hashMap.put("location",location_name.getText().toString());
-                        hashMap.put("location_id",location_id.toString());
+                        hashMap.put("username", checkedUsername.toString());
+                        hashMap.put("location", location_name.getText().toString());
+                        hashMap.put("location_id", location_id.toString());
                         return hashMap;
                     }
                 };
@@ -125,8 +123,11 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
-                locationLaunchIntent.putExtra("username",username);
+                Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
+                locationLaunchIntent.putExtra("username", username);
+                locationLaunchIntent.putExtra("post title", post_title.getText().toString());
+                locationLaunchIntent.putExtra("post text", post_text.getText().toString());
+                locationLaunchIntent.putExtra("location", location_name.getText().toString());
                 startActivity(locationLaunchIntent);
             }
         });
@@ -147,8 +148,6 @@ public class PostCreate extends AppCompatActivity implements GoogleApiClient.OnC
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e("tag",connectionResult.toString());
+        Log.e("tag", connectionResult.toString());
     }
-
-
 }
