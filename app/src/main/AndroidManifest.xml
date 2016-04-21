@@ -37,12 +37,19 @@
         You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
 
-        <activity android:name=".LoginScreen" />
+        <activity
+            android:name=".LoginScreen"
+            android:label="@string/title_activity_login"/>
+        <activity
+            android:name=".Register"
+            android:label="@string/title_activity_register"/>
         <activity
             android:name=".PostList"
             android:label="@string/title_activity_post_list"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PostCreate" />
+        <activity
+            android:name=".PostCreate"
+            android:label="@string/title_post_create" />
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,7 +61,10 @@
             android:name=".LocationList"
             android:label="@string/title_activity_location_list"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PostDetails"></activity>
+        <activity
+            android:name=".PostDetails"
+            android:label="Fiesta Post" />
+
     </application>
 
 </manifest>

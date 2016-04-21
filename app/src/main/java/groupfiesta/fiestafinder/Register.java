@@ -1,8 +1,8 @@
 package groupfiesta.fiestafinder;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,37 +22,38 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginScreen extends AppCompatActivity {
-    private EditText username,password;
-    private Button login_button,register_button;
+public class Register extends AppCompatActivity {
+    private static final String URLREGISTER = "http://fiestafinder.azurewebsites.net/webservice/register_control.php";
+
+    private EditText usernamereg, passwordreg;
+    private Button register;
     private RequestQueue requestQueue;
-    private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/user_control.php";
     private StringRequest request;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
-        username = (EditText) findViewById(R.id.username_input);
-        password = (EditText) findViewById(R.id.password_input);
-        login_button = (Button) findViewById(R.id.login_button);
-        register_button = (Button) findViewById(R.id.register_button);
+
+        usernamereg = (EditText) findViewById(R.id.usernamereg_input);
+        passwordreg = (EditText) findViewById(R.id.passwordreg_input);
+        register = (Button) findViewById(R.id.registernow_button);
 
         requestQueue = Volley.newRequestQueue(this);
 
-        login_button.setOnClickListener(new View.OnClickListener() {
+        register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                request = new StringRequest(Request.Method.POST, URLREGISTER, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (jsonObject.names().get(0).equals("success")) {
                                 Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
-                                Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
-                                locationLaunchIntent.putExtra("username",username.getText().toString());
+                                Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
+                                locationLaunchIntent.putExtra("username", usernamereg.getText().toString());
                                 startActivity(locationLaunchIntent);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
@@ -66,22 +67,16 @@ public class LoginScreen extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                     }
                 }) {
+
                     protected Map<String, String> getParams() throws AuthFailureError {
                         HashMap<String, String> hashMap = new HashMap<String, String>();
-                        hashMap.put("username", username.getText().toString());
-                        hashMap.put("password", password.getText().toString());
+                        hashMap.put("username", usernamereg.getText().toString());
+                        hashMap.put("password", passwordreg.getText().toString());
                         return hashMap;
                     }
                 };
                 requestQueue.add(request);
 
-            }
-        });
-        register_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent registerLaunchIntent = new Intent(getApplicationContext(),Register.class);
-                startActivity(registerLaunchIntent);
             }
         });
     }
