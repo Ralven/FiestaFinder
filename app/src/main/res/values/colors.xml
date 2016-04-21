@@ -5,4 +5,5 @@
     <color name="colorAccent">#ff81b8</color>
     <color name="backgroundColor">#8fb8da</color>
     <color name="textBackgroundColor">#e0e0e0</color>
+    <color name="registerBackground">#c3a4ef</color>
 </resources>
