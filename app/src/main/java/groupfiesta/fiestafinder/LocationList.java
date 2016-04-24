@@ -1,8 +1,16 @@
 package groupfiesta.fiestafinder;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -10,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,13 +26,23 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class LocationList extends AppCompatActivity implements AdapterView.OnItemClickListener{
+public class LocationList extends AppCompatActivity implements AdapterView.OnItemClickListener, GoogleApiClient.OnConnectionFailedListener {
     private static final String URL_LOCATIONLIST = "http://fiestafinder.azurewebsites.net/webservice/location_list.php";
 
     private RequestQueue requestQueue;
@@ -34,30 +53,34 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
     private String username;
     private Bundle dataBundle;
     private ListView location_ListView;
-    private ArrayList<String> Post_ID;
     private ArrayList<String> Locations;
-    private ArrayList<String> Post_Title;
-    private ArrayList<String> Post_Text;
-    private ArrayList<String> Username;
+    private static final int BAR = Place.TYPE_BAR;
+    private LatLng location_coordinates;
+    private String location_id;
+    private String location_name;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_locationlist);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         Locations = new ArrayList<String>();
-        Post_Title = new ArrayList<String>();
-        Post_Text = new ArrayList<String>();
-        Username = new ArrayList<String>();
-        Post_ID = new ArrayList<String>();
+
         location_ListView = (ListView) findViewById(R.id.location_ListView);
         location_ListView.setOnItemClickListener(this);
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+                .enableAutoManage(LocationList.this, LocationList.this /* OnConnectionFailedListener */)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+
         dataBundle = getIntent().getExtras();
         username = dataBundle.getString("username");
+
+
         requestQueue = Volley.newRequestQueue(this);
         request = new StringRequest(Request.Method.GET, URL_LOCATIONLIST, new Response.Listener<String>() {
             @Override
@@ -88,22 +111,49 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
-                postCreateIntent.putExtra("username",username);
-                startActivity(postCreateIntent);
+
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(LocationList.this), BAR);
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }
-
-
+    
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent postListIntent = new Intent(getApplicationContext(), PostList.class);
-
-        //postListIntent.putExtra("username", username);
-        postListIntent.putExtra("location",Locations.get(position).toString());
+        postListIntent.putExtra("username", username);
+        postListIntent.putExtra("location", Locations.get(position).toString());
+        //postListIntent.putExtra("last_location", lastLocation);
         startActivity(postListIntent);
+    }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BAR && resultCode == LocationList.RESULT_OK) {
+            // The user has selected a place. Extract the name and address.
+            final Place place = PlacePicker.getPlace(data, this);
+            location_id = place.getId();
+            location_name = place.getName().toString();
+            location_coordinates = place.getLatLng();
+            location_coordinates.describeContents();
+
+            Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
+            postCreateIntent.putExtra("username", username);
+            postCreateIntent.putExtra("location", location_name);
+            startActivity(postCreateIntent);
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e("tag", connectionResult.toString());
     }
 }
 

@@ -9,42 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".PostCreate">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/post_text_detalis"
-        android:hint="@string/post_text_hint"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:gravity="top"
-        android:layout_below="@+id/post_title_details"
-        android:layout_above="@+id/postAs_checkBox"
-        android:background="@color/textBackgroundColor"
-        android:padding="5dp"
-        android:layout_margin="5dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/post_button"
-        android:id="@+id/post_button"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_alignTop="@+id/cancel_button"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cancel_button"
-        android:id="@+id/cancel_button"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,15 +36,50 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/post_text_detalis"
+        android:hint="@string/post_text_hint"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:gravity="top"
+        android:layout_below="@+id/post_title_details"
+        android:layout_above="@+id/postAs_checkBox"
+        android:background="@color/textBackgroundColor"
+        android:padding="5dp"
+        android:layout_margin="5dp" />
+
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Post as CheckBox"
         android:id="@+id/postAs_checkBox"
         android:layout_above="@+id/post_button"
         android:layout_alignParentStart="true"
         android:checked="false"
         android:textSize="14dp"
         android:layout_margin="5dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel_button"
+        android:id="@+id/cancel_button"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/post_button"
+        android:id="@+id/post_button"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignTop="@+id/cancel_button"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
