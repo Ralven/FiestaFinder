@@ -1,6 +1,9 @@
 package groupfiesta.fiestafinder;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
@@ -51,6 +55,7 @@ public class PostCreate extends AppCompatActivity{
     private String checkedUsername = null;
 
 
+
     private RequestQueue requestQueue;
 
     @Override
@@ -67,12 +72,10 @@ public class PostCreate extends AppCompatActivity{
         postAs_checkBox = (CheckBox) findViewById(R.id.postAs_checkBox);
         checkedUsername ="Anonymous";
         postAs_checkBox.setText("Post as: Anonymous");
-
         username = dataBundle.getString("username");
         location_id = dataBundle.getString("location_id");
         location_coordinates = (LatLng) dataBundle.get("location_coordinates");
         location_name.setText(dataBundle.get("location").toString());
-
         requestQueue = Volley.newRequestQueue(this);
 
         postAs_checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -90,7 +93,17 @@ public class PostCreate extends AppCompatActivity{
         post_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(post_text.getText().toString().isEmpty() && post_title.getText().toString().isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(), "Must Fill all Fields", Toast.LENGTH_SHORT).show();
+                }else{
+                    if(post_title.getText().toString().isEmpty()){
+                        Toast.makeText(getApplicationContext(), "Must Fill Post Title", Toast.LENGTH_SHORT).show();
+                    }
+                    if(post_text.getText().toString().isEmpty()){
+                      Toast.makeText(getApplicationContext(), "Must Fill Post Text", Toast.LENGTH_SHORT).show();
+                    }
+                }
                 StringRequest request = new StringRequest(
                         Request.Method.POST,
                         URL,
@@ -101,12 +114,12 @@ public class PostCreate extends AppCompatActivity{
                                     JSONObject jsonObject = new JSONObject(response);
 //                                    Log.i("resp", jsonObject.toString());
                                     if (jsonObject.names().get(0).equals("success")) {
-                                        Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), jsonObject.getString("success"), Toast.LENGTH_LONG).show();
                                         Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
                                         locationLaunchIntent.putExtra("username", username);
                                         startActivity(locationLaunchIntent);
                                     } else {
-                                        Toast.makeText(getApplicationContext(), "Maximum character limit of 90/make sure all fields are filled", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "You exceeded the character limit", Toast.LENGTH_LONG).show();
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -147,6 +160,4 @@ public class PostCreate extends AppCompatActivity{
             }
         });
     }
-
-
 }

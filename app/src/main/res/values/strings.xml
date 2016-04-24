@@ -15,7 +15,7 @@
     <!--Buttons & Hints-->
     <string name="post_button">Post</string>
     <string name="post_title_hint">Post Title</string>
-    <string name="post_text_hint">Post Text</string>
+    <string name="post_text_hint">Post Text Maximum of 90 Characters</string>
     <string name="cancel_button">Cancel</string>
     <!--API KEYS-->
     <string name="google_app_id">AIzaSyCIMk7jgKQPJKbm0kgVgJ4d7ajdrmdzD6w</string>
