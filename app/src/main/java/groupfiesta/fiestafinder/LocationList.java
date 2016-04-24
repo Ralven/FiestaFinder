@@ -122,7 +122,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
             }
         });
     }
-    
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent postListIntent = new Intent(getApplicationContext(), PostList.class);
@@ -139,11 +139,12 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
             location_id = place.getId();
             location_name = place.getName().toString();
             location_coordinates = place.getLatLng();
-            location_coordinates.describeContents();
 
             Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
             postCreateIntent.putExtra("username", username);
             postCreateIntent.putExtra("location", location_name);
+            postCreateIntent.putExtra("location_id", location_id);
+            postCreateIntent.putExtra("location_coordinates", location_coordinates);
             startActivity(postCreateIntent);
 
         } else {

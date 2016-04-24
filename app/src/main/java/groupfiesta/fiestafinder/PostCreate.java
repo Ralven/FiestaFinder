@@ -45,6 +45,9 @@ public class PostCreate extends AppCompatActivity{
     private TextView location_name;
     private Button post_button, cancel_button;
     private CheckBox postAs_checkBox;
+    private String location_id;
+    private LatLng location_coordinates;
+    private String username;
     private String checkedUsername = null;
 
 
@@ -65,18 +68,12 @@ public class PostCreate extends AppCompatActivity{
         checkedUsername ="Anonymous";
         postAs_checkBox.setText("Post as: Anonymous");
 
-        final String username = dataBundle.getString("username");
+        username = dataBundle.getString("username");
+        location_id = dataBundle.getString("location_id");
+        location_coordinates = (LatLng) dataBundle.get("location_coordinates");
         location_name.setText(dataBundle.get("location").toString());
 
-        if(dataBundle.get("location").toString() == null){
-            startActivity(new Intent(getApplicationContext(),LocationList.class));
-        }
-
-
-
         requestQueue = Volley.newRequestQueue(this);
-
-
 
         postAs_checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -89,6 +86,7 @@ public class PostCreate extends AppCompatActivity{
                 postAs_checkBox.setText("Post as: "+checkedUsername);
             }
         });
+
         post_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,8 +126,8 @@ public class PostCreate extends AppCompatActivity{
                         hashMap.put("post_title", post_title.getText().toString());
                         hashMap.put("username", checkedUsername.toString());
                         hashMap.put("location", location_name.getText().toString());
-                        //hashMap.put("location_id", location_id.toString());
-                        //hashMap.put("location_coord", location_coordinates.toString());
+                        hashMap.put("location_id", location_id.toString());
+                        hashMap.put("location_coord", location_coordinates.toString());
                         return hashMap;
                     }
                 };
