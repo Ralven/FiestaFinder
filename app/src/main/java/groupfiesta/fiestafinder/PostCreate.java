@@ -144,7 +144,7 @@ public class PostCreate extends AppCompatActivity {
                 locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
             }
         }
-        
+
         if(distance < 150) {
             post_button.setOnClickListener(new View.OnClickListener() {
                 @Override
