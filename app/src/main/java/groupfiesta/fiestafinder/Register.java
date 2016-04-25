@@ -25,7 +25,7 @@ import java.util.Map;
 public class Register extends AppCompatActivity {
     private static final String URLREGISTER = "http://fiestafinder.azurewebsites.net/webservice/register_control.php";
 
-    private EditText usernamereg, passwordreg;
+    private EditText usernamereg, passwordreg, passwordreg_re;
     private Button register;
     private RequestQueue requestQueue;
     private StringRequest request;
@@ -38,46 +38,48 @@ public class Register extends AppCompatActivity {
 
         usernamereg = (EditText) findViewById(R.id.usernamereg_input);
         passwordreg = (EditText) findViewById(R.id.passwordreg_input);
+        passwordreg_re = (EditText) findViewById(R.id.passwordreg_reInput);
         register = (Button) findViewById(R.id.registernow_button);
 
         requestQueue = Volley.newRequestQueue(this);
-
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                request = new StringRequest(Request.Method.POST, URLREGISTER, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            if (jsonObject.names().get(0).equals("success")) {
-                                Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
-                                Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
-                                locationLaunchIntent.putExtra("username", usernamereg.getText().toString());
-                                startActivity(locationLaunchIntent);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
+            register.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (passwordreg.getText().toString().equals(passwordreg_re.getText().toString())) {
+                        request = new StringRequest(Request.Method.POST, URLREGISTER, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    if (jsonObject.names().get(0).equals("success")) {
+                                        Toast.makeText(getApplicationContext(), "SUCCESS " + jsonObject.getString("success"), Toast.LENGTH_LONG).show();
+                                        Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
+                                        locationLaunchIntent.putExtra("username", usernamereg.getText().toString());
+                                        startActivity(locationLaunchIntent);
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Error " + jsonObject.getString("error"), Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                            }
+                        }) {
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                HashMap<String, String> hashMap = new HashMap<String, String>();
+                                hashMap.put("username", usernamereg.getText().toString());
+                                hashMap.put("password", passwordreg.getText().toString());
+                                return hashMap;
+                            }
+                        };
+                        requestQueue.add(request);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                }) {
-
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        HashMap<String, String> hashMap = new HashMap<String, String>();
-                        hashMap.put("username", usernamereg.getText().toString());
-                        hashMap.put("password", passwordreg.getText().toString());
-                        return hashMap;
-                    }
-                };
-                requestQueue.add(request);
-
-            }
-        });
+                }
+            });
     }
 }
