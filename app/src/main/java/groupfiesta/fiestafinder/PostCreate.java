@@ -88,6 +88,23 @@ public class PostCreate extends AppCompatActivity {
         barLocation = new Location("gps");
         requestQueue = Volley.newRequestQueue(this);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET
+                }, 10);
+
+                Toast.makeText(getApplicationContext(),"You must allow Location Services in order to post",Toast.LENGTH_LONG).show();
+                Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
+                locationLaunchIntent.putExtra("username", username);
+                startActivity(locationLaunchIntent);
+            }
+        }else {
+            locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
+        }
+
         postAs_checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -127,19 +144,9 @@ public class PostCreate extends AppCompatActivity {
 
         };
 
-        locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.INTERNET
-                }, 10);
-                return;
-            }
-        } else {
 
-        }
+
         if(distance < 150) {
 
             post_button.setOnClickListener(new View.OnClickListener() {
