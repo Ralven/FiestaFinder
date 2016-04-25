@@ -17,9 +17,11 @@
         android:textSize="14pt"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/post_text_detalis"
         android:textStyle="bold"
-        android:layout_margin="5dp" />
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp" />
 
     <EditText
         android:layout_width="wrap_content"

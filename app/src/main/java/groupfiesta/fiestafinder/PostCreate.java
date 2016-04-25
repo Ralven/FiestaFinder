@@ -1,10 +1,15 @@
 package groupfiesta.fiestafinder;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,7 +45,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostCreate extends AppCompatActivity{
+public class PostCreate extends AppCompatActivity {
 
     private static final String URL = "http://fiestafinder.azurewebsites.net/webservice/post_control.php";
 
@@ -50,10 +55,14 @@ public class PostCreate extends AppCompatActivity{
     private Button post_button, cancel_button;
     private CheckBox postAs_checkBox;
     private String location_id;
+    private String current_Location;
     private LatLng location_coordinates;
     private String username;
     private String checkedUsername = null;
-
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private Location barLocation;
+    private float distance;
 
 
     private RequestQueue requestQueue;
@@ -70,83 +79,131 @@ public class PostCreate extends AppCompatActivity{
         cancel_button = (Button) findViewById(R.id.cancel_button);
         location_name = (TextView) findViewById(R.id.location_name);
         postAs_checkBox = (CheckBox) findViewById(R.id.postAs_checkBox);
-        checkedUsername ="Anonymous";
+        checkedUsername = "Anonymous";
         postAs_checkBox.setText("Post as: Anonymous");
         username = dataBundle.getString("username");
         location_id = dataBundle.getString("location_id");
         location_coordinates = (LatLng) dataBundle.get("location_coordinates");
         location_name.setText(dataBundle.get("location").toString());
+        barLocation = new Location("gps");
         requestQueue = Volley.newRequestQueue(this);
 
         postAs_checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(postAs_checkBox.isChecked()){
+                if (postAs_checkBox.isChecked()) {
                     checkedUsername = username;
-                }else{
-                    checkedUsername ="Anonymous";
+                } else {
+                    checkedUsername = "Anonymous";
                 }
-                postAs_checkBox.setText("Post as: "+checkedUsername);
+                postAs_checkBox.setText("Post as: " + checkedUsername);
             }
         });
 
-        post_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(post_text.getText().toString().isEmpty() && post_title.getText().toString().isEmpty())
-                {
-                    Toast.makeText(getApplicationContext(), "Must Fill all Fields", Toast.LENGTH_SHORT).show();
-                }else{
-                    if(post_title.getText().toString().isEmpty()){
-                        Toast.makeText(getApplicationContext(), "Must Fill Post Title", Toast.LENGTH_SHORT).show();
-                    }
-                    if(post_text.getText().toString().isEmpty()){
-                      Toast.makeText(getApplicationContext(), "Must Fill Post Text", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                StringRequest request = new StringRequest(
-                        Request.Method.POST,
-                        URL,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                try {
-                                    JSONObject jsonObject = new JSONObject(response);
-//                                    Log.i("resp", jsonObject.toString());
-                                    if (jsonObject.names().get(0).equals("success")) {
-                                        Toast.makeText(getApplicationContext(), jsonObject.getString("success"), Toast.LENGTH_LONG).show();
-                                        Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
-                                        locationLaunchIntent.putExtra("username", username);
-                                        startActivity(locationLaunchIntent);
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "You exceeded the character limit", Toast.LENGTH_LONG).show();
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
 
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                current_Location = (location.getLatitude() + " " + location.getLongitude());
+
+                barLocation.setLatitude(location_coordinates.latitude);
+                barLocation.setLongitude(location_coordinates.longitude);
+                distance = location.distanceTo(barLocation);
+
+
+            }
+
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+            }
+
+            public void onProviderEnabled(String s) {
+            }
+
+            public void onProviderDisabled(String s) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+
+        };
+
+        locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET
+                }, 10);
+                return;
+            }
+        } else {
+
+        }
+        if(distance < 150) {
+
+            post_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                        if (post_text.getText().toString().isEmpty() && post_title.getText().toString().isEmpty()) {
+                            Toast.makeText(getApplicationContext(), "Must Fill all Fields", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (post_title.getText().toString().isEmpty()) {
+                                Toast.makeText(getApplicationContext(), "Must Fill Post Title", Toast.LENGTH_SHORT).show();
+                            }
+                            if (post_text.getText().toString().isEmpty()) {
+                                Toast.makeText(getApplicationContext(), "Must Fill Post Text", Toast.LENGTH_SHORT).show();
                             }
                         }
-                ) {
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        HashMap<String, String> hashMap = new HashMap<String, String>();
-                        hashMap.put("post_text", post_text.getText().toString());
-                        hashMap.put("post_title", post_title.getText().toString());
-                        hashMap.put("username", checkedUsername.toString());
-                        hashMap.put("location", location_name.getText().toString());
-                        hashMap.put("location_id", location_id.toString());
-                        hashMap.put("location_coord", location_coordinates.toString());
-                        return hashMap;
+                        StringRequest request = new StringRequest(
+                                Request.Method.POST,
+                                URL,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        try {
+                                            JSONObject jsonObject = new JSONObject(response);
+    //                                    Log.i("resp", jsonObject.toString());
+                                            if (jsonObject.names().get(0).equals("success")) {
+                                                Toast.makeText(getApplicationContext(), jsonObject.getString("success"), Toast.LENGTH_LONG).show();
+                                                Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
+                                                locationLaunchIntent.putExtra("username", username);
+                                                startActivity(locationLaunchIntent);
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "You exceeded the character limit", Toast.LENGTH_LONG).show();
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+
+                                    }
+                                }
+                        ) {
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                HashMap<String, String> hashMap = new HashMap<String, String>();
+                                hashMap.put("post_text", post_text.getText().toString());
+                                hashMap.put("post_title", post_title.getText().toString());
+                                hashMap.put("username", checkedUsername.toString());
+                                hashMap.put("location", location_name.getText().toString());
+                                hashMap.put("location_id", location_id.toString());
+                                hashMap.put("location_coord", location_coordinates.toString());
+                                return hashMap;
+                            }
+                        };
+                        requestQueue.add(request);
                     }
-                };
-                requestQueue.add(request);
+                });
+            }else{
+                Toast.makeText(getApplicationContext(),"You must be at "+location_name.getText().toString()+" to post",Toast.LENGTH_LONG).show();
+                Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
+                locationLaunchIntent.putExtra("username", username);
+                startActivity(locationLaunchIntent);
             }
-        });
 
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,4 +217,16 @@ public class PostCreate extends AppCompatActivity{
             }
         });
     }
+
+    public void onRequestPermissionResults(int requestCode,String[] permissions, int[] grantResults)
+    {
+        switch(requestCode){
+            case 10:
+                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+
+                    return;
+
+        }
+    }
+
 }

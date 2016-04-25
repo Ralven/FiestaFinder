@@ -6,7 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.audiofx.BassBoost;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -26,6 +30,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -67,19 +73,20 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         Locations = new ArrayList<String>();
 
         location_ListView = (ListView) findViewById(R.id.location_ListView);
         location_ListView.setOnItemClickListener(this);
+
         mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 .enableAutoManage(LocationList.this, LocationList.this /* OnConnectionFailedListener */)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .build();
+                .addApi(AppIndex.API).build();
 
         dataBundle = getIntent().getExtras();
         username = dataBundle.getString("username");
-
 
         requestQueue = Volley.newRequestQueue(this);
         request = new StringRequest(Request.Method.GET, URL_LOCATIONLIST, new Response.Listener<String>() {
@@ -111,14 +118,12 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
                     startActivityForResult(builder.build(LocationList.this), BAR);
                 } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
-
             }
         });
     }
@@ -128,7 +133,6 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         Intent postListIntent = new Intent(getApplicationContext(), PostList.class);
         postListIntent.putExtra("username", username);
         postListIntent.putExtra("location", Locations.get(position).toString());
-        //postListIntent.putExtra("last_location", lastLocation);
         startActivity(postListIntent);
     }
 
