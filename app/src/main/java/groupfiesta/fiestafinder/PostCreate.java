@@ -135,8 +135,7 @@ public class PostCreate extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.INTERNET
                 }, 10);
-
-                Toast.makeText(getApplicationContext(), "You must allow Location Services in order to post", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "You must allow Location Services in order to post", Toast.LENGTH_SHORT).show();
                 Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
                 locationLaunchIntent.putExtra("username", username);
                 startActivity(locationLaunchIntent);
