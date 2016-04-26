@@ -11,5 +11,9 @@
         android:text="New Text"
         android:id="@+id/postlistitem_txt"
         android:layout_margin="5dp"
-        android:padding="5dp" />
+        android:textAlignment="center"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:textSize="20sp" />
 </LinearLayout>

@@ -5,10 +5,11 @@
     <string name="password">Password</string>
     <string name="username_hint">Username</string>
     <string name="login">Login</string>
-    <string name="register_button">Register</string>
+    <string name="register_button">CREATE NEW FIESTAFINDER ACCOUNT</string>
     <!--Activity Titles-->
-    <string name="title_activity_register">Register</string>
+    <string name="title_activity_register">Create Account</string>
     <string name="title_activity_post_list">Fiesta Posts</string>
+    <string name="title_activity_post_details">Details</string>
     <string name="title_activity_location_list">Fiestas!</string>
     <string name="title_activity_login">Sign in</string>
     <string name="title_post_create">Make a Fiesta Post</string>
@@ -33,5 +34,7 @@
         completions."
     </string>
     <string name="username">Username:</string>
+    <string name="location_title">Location Title</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

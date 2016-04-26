@@ -30,6 +30,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_input_add"
-        android:tint="#ffffff" />
+        android:visibility="visible"
+        android:tint="#ffffff"
+        style="@style/AppTheme.NoActionBar" />
 
 </android.support.design.widget.CoordinatorLayout>

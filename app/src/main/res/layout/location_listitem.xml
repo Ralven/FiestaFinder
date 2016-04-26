@@ -11,6 +11,8 @@
         android:text="New Text"
         android:id="@+id/locationitem_txt"
         android:layout_margin="5dp"
-        android:padding="5dp"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="10dp" />
 </LinearLayout>

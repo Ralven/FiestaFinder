@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static groupfiesta.fiestafinder.R.layout.activity_login;
+
 public class LoginScreen extends AppCompatActivity {
     private EditText username,password;
     private Button login_button,register_button;
@@ -50,7 +52,6 @@ public class LoginScreen extends AppCompatActivity {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (jsonObject.names().get(0).equals("success")) {
-                                Toast.makeText(getApplicationContext(), jsonObject.getString("success"), Toast.LENGTH_SHORT).show();
                                 Intent locationLaunchIntent = new Intent(getApplicationContext(),LocationList.class);
                                 locationLaunchIntent.putExtra("username",username.getText().toString());
                                 startActivity(locationLaunchIntent);
