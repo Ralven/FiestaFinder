@@ -116,14 +116,19 @@ public class PostCreate extends AppCompatActivity {
                                     public void onResponse(String response) {
                                         try {
                                             JSONObject jsonObject = new JSONObject(response);
-    //                                    Log.i("resp", jsonObject.toString());
+                                            Log.i("resp", jsonObject.toString());
                                             if (jsonObject.names().get(0).equals("success")) {
                                                 Toast.makeText(getApplicationContext(), jsonObject.getString("success"), Toast.LENGTH_LONG).show();
                                                 Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
                                                 locationLaunchIntent.putExtra("username", username);
                                                 startActivity(locationLaunchIntent);
                                             } else {
-                                                Toast.makeText(getApplicationContext(), "You exceeded the character limit", Toast.LENGTH_LONG).show();
+                                                if(post_text.getText().length() > 90)
+                                                {
+                                                    Toast.makeText(getApplicationContext(), "Exceeded the character limit", Toast.LENGTH_LONG).show();
+                                                }else{
+                                                    Toast.makeText(getApplicationContext(), "ERROR: Post could not be created", Toast.LENGTH_LONG).show();
+                                                }
                                             }
                                         } catch (JSONException e) {
                                             e.printStackTrace();

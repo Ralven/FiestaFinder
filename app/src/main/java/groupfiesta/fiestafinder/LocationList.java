@@ -179,7 +179,9 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
             location_coordinates = place.getLatLng();
             barLocation.setLatitude(location_coordinates.latitude);
             barLocation.setLongitude(location_coordinates.longitude);
+
             distance = myLocation.distanceTo(barLocation);
+
             if(distance < 200) {
                 Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
                 postCreateIntent.putExtra("username", username);
