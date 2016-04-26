@@ -5,7 +5,7 @@
     <string name="password">Password</string>
     <string name="username_hint">Username</string>
     <string name="login">Login</string>
-    <string name="register_button">CREATE NEW FIESTAFINDER ACCOUNT</string>
+    <string name="register_button">CREATE NEW FIESTA FINDER ACCOUNT</string>
     <!--Activity Titles-->
     <string name="title_activity_register">Create Account</string>
     <string name="title_activity_post_list">Fiesta Posts</string>
