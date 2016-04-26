@@ -55,14 +55,10 @@ public class PostCreate extends AppCompatActivity {
     private Button post_button, cancel_button;
     private CheckBox postAs_checkBox;
     private String location_id;
-    private String current_Location;
     private LatLng location_coordinates;
     private String username;
     private String checkedUsername = null;
-    private LocationManager locationManager;
-    private LocationListener locationListener;
-    private Location barLocation;
-    private float distance;
+
 
 
     private RequestQueue requestQueue;
@@ -85,10 +81,7 @@ public class PostCreate extends AppCompatActivity {
         location_id = dataBundle.getString("location_id");
         location_coordinates = (LatLng) dataBundle.get("location_coordinates");
         location_name.setText(dataBundle.get("location").toString());
-        barLocation = new Location("gps");
         requestQueue = Volley.newRequestQueue(this);
-
-
 
         postAs_checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -102,49 +95,6 @@ public class PostCreate extends AppCompatActivity {
             }
         });
 
-
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                current_Location = (location.getLatitude() + " " + location.getLongitude());
-
-                barLocation.setLatitude(location_coordinates.latitude);
-                barLocation.setLongitude(location_coordinates.longitude);
-                distance = location.distanceTo(barLocation);
-
-
-            }
-
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-            }
-
-            public void onProviderEnabled(String s) {
-            }
-
-            public void onProviderDisabled(String s) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.INTERNET
-                }, 10);
-                Toast.makeText(getApplicationContext(), "You must allow Location Services in order to post", Toast.LENGTH_SHORT).show();
-                Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
-                locationLaunchIntent.putExtra("username", username);
-                startActivity(locationLaunchIntent);
-            } else {
-                locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
-            }
-        }
-
-        if(distance < 150) {
             post_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -201,12 +151,7 @@ public class PostCreate extends AppCompatActivity {
                         requestQueue.add(request);
                     }
                 });
-            }else{
-                Toast.makeText(getApplicationContext(),"You must be at "+location_name.getText().toString()+" to post",Toast.LENGTH_LONG).show();
-                Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
-                locationLaunchIntent.putExtra("username", username);
-                startActivity(locationLaunchIntent);
-            }
+
 
         cancel_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,15 +166,6 @@ public class PostCreate extends AppCompatActivity {
         });
     }
 
-    public void onRequestPermissionResults(int requestCode,String[] permissions, int[] grantResults)
-    {
-        switch(requestCode){
-            case 10:
-                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
 
-                    return;
-
-        }
-    }
 
 }

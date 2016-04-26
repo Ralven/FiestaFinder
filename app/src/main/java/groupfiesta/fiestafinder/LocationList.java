@@ -64,6 +64,11 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
     private LatLng location_coordinates;
     private String location_id;
     private String location_name;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private Location barLocation;
+    private Location myLocation;
+    private float distance;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -73,7 +78,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        barLocation = new Location("gps");
         Locations = new ArrayList<String>();
         location_ListView = (ListView) findViewById(R.id.location_ListView);
         location_ListView.setOnItemClickListener(this);
@@ -112,6 +117,25 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         });
         requestQueue.add(request);
 
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                myLocation = location;
+
+            }
+
+            public void onStatusChanged(String s, int i, Bundle bundle) {}
+
+            public void onProviderEnabled(String s) {}
+
+            public void onProviderDisabled(String s) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+
+        };
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +149,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
                         }, 10);
                         Toast.makeText(getApplicationContext(), "You must allow Location Services in order to post", Toast.LENGTH_LONG).show();
                     }else{
+                        locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
                         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                         try {
                             startActivityForResult(builder.build(LocationList.this), BAR);
@@ -152,12 +177,19 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
             location_id = place.getId();
             location_name = place.getName().toString();
             location_coordinates = place.getLatLng();
-            Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
-            postCreateIntent.putExtra("username", username);
-            postCreateIntent.putExtra("location", location_name);
-            postCreateIntent.putExtra("location_id", location_id);
-            postCreateIntent.putExtra("location_coordinates", location_coordinates);
-            startActivity(postCreateIntent);
+            barLocation.setLatitude(location_coordinates.latitude);
+            barLocation.setLongitude(location_coordinates.longitude);
+            distance = myLocation.distanceTo(barLocation);
+            if(distance < 200) {
+                Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
+                postCreateIntent.putExtra("username", username);
+                postCreateIntent.putExtra("location", location_name);
+                postCreateIntent.putExtra("location_id", location_id);
+                postCreateIntent.putExtra("location_coordinates", location_coordinates);
+                startActivity(postCreateIntent);
+            }else{
+            Toast.makeText(getApplicationContext(),"You must be at "+location_name+" to post",Toast.LENGTH_LONG).show();
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -166,6 +198,17 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e("tag", connectionResult.toString());
+    }
+
+    public void onRequestPermissionResults(int requestCode,String[] permissions, int[] grantResults)
+    {
+        switch(requestCode){
+            case 10:
+                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+
+                    return;
+
+        }
     }
 }
 
