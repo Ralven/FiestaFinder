@@ -36,5 +36,7 @@
     <string name="username">Username:</string>
     <string name="location_title">Location Title</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_location_list1">LocationList1</string>
+    <string name="logout_settings">Log Out</string>
 
 </resources>

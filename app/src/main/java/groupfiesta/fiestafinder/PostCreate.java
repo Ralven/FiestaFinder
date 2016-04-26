@@ -121,6 +121,7 @@ public class PostCreate extends AppCompatActivity {
                                                 Toast.makeText(getApplicationContext(), jsonObject.getString("success"), Toast.LENGTH_LONG).show();
                                                 Intent locationLaunchIntent = new Intent(getApplicationContext(), LocationList.class);
                                                 locationLaunchIntent.putExtra("username", username);
+                                                locationLaunchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                 startActivity(locationLaunchIntent);
                                             } else {
                                                 if(post_text.getText().length() > 90)
@@ -166,6 +167,7 @@ public class PostCreate extends AppCompatActivity {
                 locationLaunchIntent.putExtra("post title", post_title.getText().toString());
                 locationLaunchIntent.putExtra("post text", post_text.getText().toString());
                 locationLaunchIntent.putExtra("location", location_name.getText().toString());
+                locationLaunchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(locationLaunchIntent);
             }
         });

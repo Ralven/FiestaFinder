@@ -55,7 +55,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PostCreate"
-            android:label="@string/title_post_create" />
+            android:label="@string/title_post_create"/>
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
