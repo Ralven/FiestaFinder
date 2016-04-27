@@ -82,8 +82,9 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         myPrefs = new AppPreferences(super.getApplicationContext());
-        barLocation = new Location("gps");
+
         Locations = new ArrayList<String>();
         location_ListView = (ListView) findViewById(R.id.location_ListView);
         location_ListView.setOnItemClickListener(this);
@@ -126,9 +127,8 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                myLocation = new Location(location);
+                myLocation = new Location("gps");
                 myLocation = location;
-
             }
 
             public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -180,16 +180,20 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == BAR && resultCode == LocationList.RESULT_OK) {
+
+            barLocation = new Location("gps");
             // The user has selected a place. Extract the name and address.
             final Place place = PlacePicker.getPlace(data, this);
             location_id = place.getId();
             location_name = place.getName().toString();
             location_coordinates = place.getLatLng();
+
             barLocation.setLatitude(location_coordinates.latitude);
             barLocation.setLongitude(location_coordinates.longitude);
+
             distance = myLocation.distanceTo(barLocation);
 
-            if (distance < 150) {
+            if (distance < 200) {
                 Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
                 postCreateIntent.putExtra("username", username);
                 postCreateIntent.putExtra("location", location_name);
