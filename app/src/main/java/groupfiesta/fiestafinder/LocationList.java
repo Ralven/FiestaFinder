@@ -126,13 +126,15 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                myLocation = location;
+                myLocation = new Location(location);
 
             }
 
-            public void onStatusChanged(String s, int i, Bundle bundle) {}
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+            }
 
-            public void onProviderEnabled(String s) {}
+            public void onProviderEnabled(String s) {
+            }
 
             public void onProviderDisabled(String s) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -153,7 +155,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
                                 Manifest.permission.INTERNET
                         }, 10);
                         Toast.makeText(getApplicationContext(), "You must allow Location Services in order to post", Toast.LENGTH_LONG).show();
-                    }else{
+                    } else {
                         locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
                         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                         try {
@@ -184,18 +186,17 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
             location_coordinates = place.getLatLng();
             barLocation.setLatitude(location_coordinates.latitude);
             barLocation.setLongitude(location_coordinates.longitude);
-
             distance = myLocation.distanceTo(barLocation);
 
-            if(distance < 200) {
+            if (distance < 150) {
                 Intent postCreateIntent = new Intent(getApplicationContext(), PostCreate.class);
                 postCreateIntent.putExtra("username", username);
                 postCreateIntent.putExtra("location", location_name);
                 postCreateIntent.putExtra("location_id", location_id);
                 postCreateIntent.putExtra("location_coordinates", location_coordinates);
                 startActivity(postCreateIntent);
-            }else{
-            Toast.makeText(getApplicationContext(),"You must be at "+location_name+" to post",Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "You must be at " + location_name + " to post there", Toast.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -207,16 +208,16 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         Log.e("tag", connectionResult.toString());
     }
 
-    public void onRequestPermissionResults(int requestCode,String[] permissions, int[] grantResults)
-    {
-        switch(requestCode){
+    public void onRequestPermissionResults(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
             case 10:
-                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
 
                     return;
 
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -234,7 +235,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             myPrefs.eraseUserData(super.getApplicationContext());
-            Intent loginIntent = new Intent(getApplicationContext(),LoginScreen.class);
+            Intent loginIntent = new Intent(getApplicationContext(), LoginScreen.class);
             loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(loginIntent);
             return true;
