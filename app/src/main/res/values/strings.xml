@@ -20,7 +20,7 @@
     <string name="cancel_button">Cancel</string>
     <!--API KEYS-->
     <string name="google_app_id">AIzaSyCIMk7jgKQPJKbm0kgVgJ4d7ajdrmdzD6w</string>
-    <string name="google_api_key">AIzaSyA1kPDB0SxVCEXjT1Bv2AE0O69IBGfLRPI</string>
+    <string name="google_api_key">AIzaSyCdrAwPNhSWmH3_aoR-Ek6tV6QLaysq2-A</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
