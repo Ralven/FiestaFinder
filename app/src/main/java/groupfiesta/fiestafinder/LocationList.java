@@ -127,6 +127,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onLocationChanged(Location location) {
                 myLocation = new Location(location);
+                myLocation = location;
 
             }
 
