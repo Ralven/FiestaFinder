@@ -3,6 +3,7 @@ package groupfiesta.fiestafinder;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -53,6 +54,7 @@ import java.util.ArrayList;
 public class LocationList extends AppCompatActivity implements AdapterView.OnItemClickListener, GoogleApiClient.OnConnectionFailedListener {
     private static final String URL_LOCATIONLIST = "http://fiestafinder.azurewebsites.net/webservice/location_list.php";
 
+    private AppPreferences myPrefs;
     private RequestQueue requestQueue;
     private StringRequest request;
     private String postTitle;
@@ -80,6 +82,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        myPrefs = new AppPreferences(super.getApplicationContext());
         barLocation = new Location("gps");
         Locations = new ArrayList<String>();
         location_ListView = (ListView) findViewById(R.id.location_ListView);
@@ -230,6 +233,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            myPrefs.eraseUserData(super.getApplicationContext());
             Intent loginIntent = new Intent(getApplicationContext(),LoginScreen.class);
             loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(loginIntent);
