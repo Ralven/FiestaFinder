@@ -166,6 +166,15 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
                         }
                     }
                 }
+                else{
+                    locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    try {
+                        startActivityForResult(builder.build(LocationList.this), BAR);
+                    } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
     }
