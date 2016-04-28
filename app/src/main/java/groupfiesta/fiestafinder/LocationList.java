@@ -64,7 +64,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
     private Bundle dataBundle;
     private ListView location_ListView;
     private ArrayList<String> Locations;
-    private static final int BAR = Place.TYPE_BAR;
+    private static final int PLACE_PICKER_REQUEST = 1;
     private LatLng location_coordinates;
     private String location_id;
     private String location_name;
@@ -160,7 +160,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
                         locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
                         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                         try {
-                            startActivityForResult(builder.build(LocationList.this), BAR);
+                            startActivityForResult(builder.build(LocationList.this), PLACE_PICKER_REQUEST);
                         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                             e.printStackTrace();
                         }
@@ -170,7 +170,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
                     locationListener.onLocationChanged(locationManager.getLastKnownLocation("gps"));
                     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                     try {
-                        startActivityForResult(builder.build(LocationList.this), BAR);
+                        startActivityForResult(builder.build(LocationList.this), PLACE_PICKER_REQUEST);
                     } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                         e.printStackTrace();
                     }
@@ -188,7 +188,8 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BAR && resultCode == LocationList.RESULT_OK) {
+        if (requestCode == PLACE_PICKER_REQUEST){
+            if (resultCode == LocationList.RESULT_OK){
 
             barLocation = new Location("gps");
             // The user has selected a place. Extract the name and address.
@@ -212,6 +213,7 @@ public class LocationList extends AppCompatActivity implements AdapterView.OnIte
             } else {
                 Toast.makeText(getApplicationContext(), "You must be at " + location_name + " to post there", Toast.LENGTH_LONG).show();
             }
+        }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
